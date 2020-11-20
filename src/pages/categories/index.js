@@ -16,7 +16,6 @@ export default class Page {
 
   reorderingEvent = async event => {
     const targetChildNodes = event.target.childNodes;
-    const { from, to } = event.detail; //TODO: Как это применить?
 
     const requestData = [...targetChildNodes].map(item => {
       const id = item.dataset.id;
@@ -25,14 +24,16 @@ export default class Page {
     });
 
     try {
-      const result = await fetchJson(`${process.env.BACKEND_URL}api/rest/subcategories`, {
+      await fetchJson(`${process.env.BACKEND_URL}api/rest/subcategories`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestData)
       });
+
       this.showNotificationMessage('Category order saved', 'success');
+
     } catch (error) {
       this.showNotificationMessage('Category order NOT saved', 'error');
       console.error('something went wrong', error);
@@ -41,10 +42,6 @@ export default class Page {
 
   showNotificationMessage(messageText, messageType) {
     const notificationMessage = new NotificationMessage(messageText, { type: messageType });
-    notificationMessage.element.style.position = 'fixed';
-    notificationMessage.element.style.bottom = `10px`;
-    notificationMessage.element.style.right = '10px';
-
     notificationMessage.show();
   }
 
@@ -58,8 +55,7 @@ export default class Page {
   };
 
   async render() {
-    const [response] = await Promise.all([this.getCategoriesData()]);
-
+    const response = await this.getCategoriesData();
     const element = document.createElement('div');
     element.innerHTML = this.template;
     this.element = element.firstElementChild;
@@ -92,12 +88,12 @@ export default class Page {
 
   async getCategoriesData() {
     const url = this.getRequestLink('/api/rest/categories');
-    const request = await fetchJson(url);
-    return request;
+    return await fetchJson(url);
   }
 
   getRequestLink(requestString) {
     const newUrl = new URL(requestString, `${process.env.BACKEND_URL}`);
+
     newUrl.searchParams.set('_sort', 'weight');
     newUrl.searchParams.set('_refs', 'subcategory');
 
@@ -132,7 +128,7 @@ export default class Page {
       const items = this.getCategoriesListItem(dataItem);
       const sortableList = new SortableList({ items });
 
-      this.components[dataItem.id] = sortableList; //TODO: Не уверен что правильно реализовал инициализацию компонента SortableList
+      this.components[dataItem.id] = sortableList;
 
       this.listContainers[dataItem.id].append(sortableList.element);
     });
@@ -154,6 +150,7 @@ export default class Page {
 
   getSubElements(element) {
     const elements = element.querySelectorAll('[data-element]');
+
     return [...elements].reduce((acc, item) => {
       acc[item.dataset.element] = item;
       return acc;
@@ -169,7 +166,9 @@ export default class Page {
   }
 
   destroy() {
-    this.subElements.categoriesContainer.removeEventListener('pointerdown', this.onPointerDown);
+    const {categoriesContainer} = this.subElements;
+    categoriesContainer.removeEventListener('pointerdown', this.onPointerDown);
+
     for (const component of Object.values(this.components)) {
       component.destroy();
     }

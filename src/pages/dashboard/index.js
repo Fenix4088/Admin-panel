@@ -11,10 +11,26 @@ export default class Page {
   components = {};
 
   async getDataForColumnCharts (from, to) {
-    console.log(from);
-    const ORDERS = `${process.env.BACKEND_URL}api/dashboard/orders?from=${from.toISOString()}&to=${to.toISOString()}`;
-    const SALES = `${process.env.BACKEND_URL}api/dashboard/sales?from=${from.toISOString()}&to=${to.toISOString()}`;
-    const CUSTOMERS = `${process.env.BACKEND_URL}api/dashboard/customers?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`;
+    const ORDERS = this.creatURl(
+      'api/dashboard/orders', 
+      [
+        {name:'from', value: from.toISOString()},
+        {name:'to', value: to.toISOString()}
+      ]);
+
+    const SALES = this.creatURl(
+      'api/dashboard/sales', 
+      [
+        {name:'from', value: from.toISOString()},
+        {name:'to', value: to.toISOString()}
+      ]);
+
+    const CUSTOMERS = this.creatURl(
+      'api/dashboard/customers', 
+      [
+        {name:'from', value: from.toISOString()},
+        {name:'to', value: to.toISOString()}
+      ]);
 
     const ordersData = fetchJson(ORDERS);
     const salesData = fetchJson(SALES);
@@ -22,6 +38,19 @@ export default class Page {
 
     const data = await Promise.all([ordersData, salesData, customersData]);
     return data.map(item => Object.values(item));
+  }
+
+
+  creatURl(pathname, searchParams = []) {
+    const url = new URL(pathname, process.env.BACKEND_URL);
+  
+    if(searchParams.length) {
+      searchParams.forEach(param => {
+        url.searchParams.set(param.name, param.value);
+      });
+    }
+  
+    return url.href;
   }
 
   async updateTableComponent (from, to) {
@@ -148,22 +177,7 @@ export default class Page {
   }
 
   formatBigInt(price) {
-    const newArr = [];
-    const priceString = String(price);
-    const lastElementIndex = priceString.length - 1;
-    let count = 0;
-    for (let i = lastElementIndex; i >= 0; i--) {
-      count++;
-      newArr.push(priceString[i]);
-      if (count % 3 === 0) {
-        newArr.push(',');
-      }
-    }
-
-    if (newArr[newArr.length - 1] === ',') {
-      newArr.splice(newArr.length - 1, 1);
-    }
-    return newArr.reverse().join('');
+    return price.toLocaleString('en-US');
   }
 
   destroy () {

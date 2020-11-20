@@ -99,6 +99,10 @@ export default class SortableTable {
   }
 
   async loadData (id, order, start = this.start, end = this.end) {
+    const {loading} = this.subElements;
+
+    loading.classList.remove("hide");
+
     this.url.searchParams.set('_sort', id);
     this.url.searchParams.set('_order', order);
     this.url.searchParams.set('_start', start);
@@ -109,6 +113,9 @@ export default class SortableTable {
     const data = await fetchJson(this.url);
 
     this.element.classList.remove('sortable-table_loading');
+    
+    loading.classList.add("hide");
+
     return data;
   }
 
@@ -200,7 +207,7 @@ export default class SortableTable {
         ${this.getTableHeader()}
         ${this.getTableBody(this.data)}
 
-        <div data-element="loading" class="loading-line sortable-table__loading-line"></div>
+        <div data-element="loading" class="loading-line sortable-table__loading-line hide"></div>
 
         <div data-element="emptyPlaceholder" class="sortable-table__empty-placeholder">
           <div class="sortable-table__placeholder-wrapper">

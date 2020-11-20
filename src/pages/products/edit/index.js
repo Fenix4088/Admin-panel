@@ -7,15 +7,12 @@ export default class Page {
   subElements = {};
   components = {};
 
-  initEventListeners() {
-    // const { productForm } = this.components;
-    // productForm.element.addEventListener('product-updated', (event) => {
-    //   console.log(event.detail);
-    // })
+  constructor(match) {
+    this.match = match;
   }
 
   render() {
-    this.getProductId();
+    this.productId = this.match[1];
     const element = document.createElement('div');
 
     element.innerHTML = this.template;
@@ -24,7 +21,6 @@ export default class Page {
     this.subElements = this.getSubElements(this.element);
     this.initComponents();
     this.renderComponents();
-    this.initEventListeners();
 
     return this.element;
   }
@@ -55,14 +51,6 @@ export default class Page {
 
   initComponents() {
     this.components.productForm = new ProductForm(this.productId);
-  }
-
-  getProductId() {
-    const { pathname } = window.location;
-    const pathnameArr = pathname.split('/');
-    let productId = pathnameArr[pathnameArr.length - 1];
-    productId = productId === 'add' ? null : productId
-    this.productId = productId;
   }
 
   getSubElements($element) {
