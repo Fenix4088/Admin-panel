@@ -9,7 +9,6 @@ export default class Router {
   }
 
   initEventListeners() {
-    // TODO: эту логику лучше перенести в точку входа - в `index.js`
     document.addEventListener('click', event => {
       
       const link = event.target.closest('a');

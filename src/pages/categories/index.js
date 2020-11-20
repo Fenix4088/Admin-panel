@@ -66,7 +66,7 @@ export default class Page {
 
     this.listContainers = this.getAllListsContainers(this.element);
 
-    this.getCategoriesList(response);
+    this.getCategoriestList(response);
     this.initEventListeners();
 
 
@@ -123,9 +123,7 @@ export default class Page {
     categoriesContainer.innerHTML = categoriesMarkup;
   }
 
-  getCategoriesList(data) {
-    // TODO: для чего здесь цикл?
-    // можно ли добавить item для SortableList не в теле цикла?
+  getCategoriestList(data) {
     data.forEach(dataItem => {
       const items = this.getCategoriesListItem(dataItem);
       const sortableList = new SortableList({ items });
@@ -138,15 +136,13 @@ export default class Page {
 
   getCategoriesListItem(data) {
     const { subcategories } = data;
-
     return subcategories.map(subcategory => {
       const wrapper = document.createElement('div');
-
       wrapper.innerHTML = `
-        <li class="categories__sortable-list-item sortable-list__item" data-grab-handle="" data-id="${subcategory.id}">
-            <strong>${subcategory.title}</strong>
-            <span><b>${subcategory.count}</b> products</span>
-        </li>`;
+            <li class="categories__sortable-list-item sortable-list__item" data-grab-handle="" data-id="${subcategory.id}">
+                <strong>${subcategory.title}</strong>
+                <span><b>${subcategory.count}</b> products</span>
+            </li>`;
 
       return wrapper.firstElementChild;
     });

@@ -1,3 +1,4 @@
+import fetchJson from '../../../utils/fetch-json.js';
 import header from './products-headers.js';
 
 import DoubleSlider from '../../../components/double-slider/index.js';
@@ -19,11 +20,6 @@ export default class Page {
   initEventListeners() {
     const { filter } = this.subElements;
     const { doubleSlider } = this.components;
-<<<<<<< HEAD
-=======
-    // TODO: Можно ли таким образом обрашатся к кнопке и вешать на нее события?
-    // Можно.
->>>>>>> c454410e4a1fbe97e19ef3df7ec094fc076dabcb
     const { clearFilterBtn } = this.components.sortableTable.subElements;
 
     filter.addEventListener('input', this.onFilterInput);
@@ -65,15 +61,9 @@ export default class Page {
     this.filterData.filterName = '';
     this.filterData.filterStatus = '';
 
-<<<<<<< HEAD
     const {from, to} = this.components.doubleSlider.subElements;
     from.innerHTML = `$${min}`;
     to.innerHTML = `$${max}`;
-=======
-    // TODO: лучше в таких случаях использовать деструкцию
-    this.components.doubleSlider.subElements.from.innerHTML = `$${min}`;
-    this.components.doubleSlider.subElements.to.innerHTML = `$${max}`;
->>>>>>> c454410e4a1fbe97e19ef3df7ec094fc076dabcb
     this.components.doubleSlider.update();
 
     this.filterData.doubleSliderData.from = 0;
@@ -102,11 +92,7 @@ export default class Page {
 
     url.searchParams.set('price_gte', minValue);
     url.searchParams.set('price_lte', maxValue);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> c454410e4a1fbe97e19ef3df7ec094fc076dabcb
     if (filterName.trim() !== '') {
       url.searchParams.set('title_like', filterName);
     }

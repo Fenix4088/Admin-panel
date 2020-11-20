@@ -1,3 +1,4 @@
+import fetchJson from '../../../utils/fetch-json.js';
 import ProductForm from '../../../components/product-form/index.js';
 
 export default class Page {

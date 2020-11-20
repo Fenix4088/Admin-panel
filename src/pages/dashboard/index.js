@@ -83,7 +83,6 @@ export default class Page {
       url: `api/dashboard/bestsellers?_start=0&_end=20&from=${from.toISOString()}&to=${to.toISOString()}`,
       isSortLocally: true,
     });
-    // TODO: подгрузка данных отключается внутри самого компонента
     sortableTable.loading = true;//TODO: Таким способом отключил подгрузку данных....
 
     const ordersChart = new ColumnChart({
@@ -177,10 +176,6 @@ export default class Page {
     });
   }
 
-  // TODO: нужно проверить данный метод на наличие дубликатов.
-  // В компоненте ColumnChart есть идентичный метод
-  // если этот метод просто форматирует числа, то стоит взглянуть на альтернативу
-  // toLocaleString
   formatBigInt(price) {
     return price.toLocaleString('en-US');
   }
