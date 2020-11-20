@@ -1,4 +1,3 @@
-import fetchJson from '../../../utils/fetch-json.js';
 import ProductForm from '../../../components/product-form/index.js';
 
 export default class Page {
@@ -6,13 +5,6 @@ export default class Page {
   productId = null;
   subElements = {};
   components = {};
-
-  initEventListeners() {
-    // const { productForm } = this.components;
-    // productForm.element.addEventListener('product-updated', (event) => {
-    //   console.log(event.detail);
-    // })
-  }
 
   render() {
     this.getProductId();
@@ -58,6 +50,8 @@ export default class Page {
   }
 
   getProductId() {
+    // TODO: нужно в роутере передать `math` в конструктор Page
+    // тогда не будет необходимости в этом методе
     const { pathname } = window.location;
     const pathnameArr = pathname.split('/');
     let productId = pathnameArr[pathnameArr.length - 1];

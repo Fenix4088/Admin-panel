@@ -1,4 +1,3 @@
-import fetchJson from '../../../utils/fetch-json.js';
 import header from './products-headers.js';
 
 import DoubleSlider from '../../../components/double-slider/index.js';
@@ -20,7 +19,9 @@ export default class Page {
   initEventListeners() {
     const { filter } = this.subElements;
     const { doubleSlider } = this.components;
-    const { clearFilterBtn } = this.components.sortableTable.subElements; //TODO: Можно ли таким образом обрашатся к кнопке и вешать на нее события?
+    // TODO: Можно ли таким образом обрашатся к кнопке и вешать на нее события?
+    // Можно.
+    const { clearFilterBtn } = this.components.sortableTable.subElements;
 
     filter.addEventListener('input', this.onFilterInput);
 
@@ -32,6 +33,7 @@ export default class Page {
   onFilterInput = event => {
     const { filterName, filterStatus } = this.subElements;
     const target = event.target;
+
     if (target === filterName) {
       this.filterData.filterName = target.value.trim();
     } else if (target === filterStatus) {
@@ -50,7 +52,7 @@ export default class Page {
     this.updateTable();
   };
 
-  clearFilters = event => {
+  clearFilters = () => {
     const { filterName, filterStatus } = this.subElements;
     const { min, max } = this.components.doubleSlider;
 
@@ -60,6 +62,7 @@ export default class Page {
     this.filterData.filterName = '';
     this.filterData.filterStatus = '';
 
+    // TODO: лучше в таких случаях использовать деструкцию
     this.components.doubleSlider.subElements.from.innerHTML = `$${min}`;
     this.components.doubleSlider.subElements.to.innerHTML = `$${max}`;
     this.components.doubleSlider.update();
@@ -87,8 +90,10 @@ export default class Page {
     } = this.filterData;
 
     const url = new URL('api/rest/products?_embed=subcategory.category', process.env.BACKEND_URL);
+
     url.searchParams.set('price_gte', minValue);
     url.searchParams.set('price_lte', maxValue);
+
     if (filterName.trim() !== '') {
       url.searchParams.set('title_like', filterName);
     }

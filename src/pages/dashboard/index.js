@@ -11,7 +11,7 @@ export default class Page {
   components = {};
 
   async getDataForColumnCharts (from, to) {
-    console.log(from);
+    // TODO: было бы неплохо переконструировать эти строки с использованием new URL
     const ORDERS = `${process.env.BACKEND_URL}api/dashboard/orders?from=${from.toISOString()}&to=${to.toISOString()}`;
     const SALES = `${process.env.BACKEND_URL}api/dashboard/sales?from=${from.toISOString()}&to=${to.toISOString()}`;
     const CUSTOMERS = `${process.env.BACKEND_URL}api/dashboard/customers?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`;
@@ -54,6 +54,7 @@ export default class Page {
       url: `api/dashboard/bestsellers?_start=0&_end=20&from=${from.toISOString()}&to=${to.toISOString()}`,
       isSortLocally: true,
     });
+    // TODO: подгрузка данных отключается внутри самого компонента
     sortableTable.loading = true;//TODO: Таким способом отключил подгрузку данных....
 
     const ordersChart = new ColumnChart({
@@ -147,6 +148,10 @@ export default class Page {
     });
   }
 
+  // TODO: нужно проверить данный метод на наличие дубликатов.
+  // В компоненте ColumnChart есть идентичный метод
+  // если этот метод просто форматирует числа, то стоит взглянуть на альтернативу
+  // toLocaleString
   formatBigInt(price) {
     const newArr = [];
     const priceString = String(price);

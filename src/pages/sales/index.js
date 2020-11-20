@@ -2,8 +2,6 @@ import SortableTable from '../../components/sortable-table/index.js';
 import RangePicker from '../../components/range-picker/index.js';
 import header from './sales-headers.js';
 
-import fetchJson from '../../utils/fetch-json.js';
-
 export default class Page {
   element;
   subElements = {};

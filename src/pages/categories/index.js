@@ -16,7 +16,8 @@ export default class Page {
 
   reorderingEvent = async event => {
     const targetChildNodes = event.target.childNodes;
-    const { from, to } = event.detail; //TODO: Как это применить?
+    // TODO: эти параметры можно удалить, они нам неинтересны
+    // const { from, to } = event.detail; //TODO: Как это применить?
 
     const requestData = [...targetChildNodes].map(item => {
       const id = item.dataset.id;
@@ -25,14 +26,16 @@ export default class Page {
     });
 
     try {
-      const result = await fetchJson(`${process.env.BACKEND_URL}api/rest/subcategories`, {
+      await fetchJson(`${process.env.BACKEND_URL}api/rest/subcategories`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestData)
       });
+
       this.showNotificationMessage('Category order saved', 'success');
+
     } catch (error) {
       this.showNotificationMessage('Category order NOT saved', 'error');
       console.error('something went wrong', error);
@@ -41,6 +44,8 @@ export default class Page {
 
   showNotificationMessage(messageText, messageType) {
     const notificationMessage = new NotificationMessage(messageText, { type: messageType });
+
+    // TODO: это лучше сделать в CSS. В данном проекте, в отличии от задачника, можно менять все
     notificationMessage.element.style.position = 'fixed';
     notificationMessage.element.style.bottom = `10px`;
     notificationMessage.element.style.right = '10px';
@@ -58,6 +63,7 @@ export default class Page {
   };
 
   async render() {
+    // TODO: почему здесь Promise.all всего с одним элементом в массиве?
     const [response] = await Promise.all([this.getCategoriesData()]);
 
     const element = document.createElement('div');
@@ -70,7 +76,7 @@ export default class Page {
 
     this.listContainers = this.getAllListsContainers(this.element);
 
-    this.getCategoriestList(response);
+    this.getCategoriesList(response);
     this.initEventListeners();
 
 
@@ -92,12 +98,13 @@ export default class Page {
 
   async getCategoriesData() {
     const url = this.getRequestLink('/api/rest/categories');
-    const request = await fetchJson(url);
-    return request;
+
+    return await fetchJson(url);
   }
 
   getRequestLink(requestString) {
     const newUrl = new URL(requestString, `${process.env.BACKEND_URL}`);
+
     newUrl.searchParams.set('_sort', 'weight');
     newUrl.searchParams.set('_refs', 'subcategory');
 
@@ -127,7 +134,9 @@ export default class Page {
     categoriesContainer.innerHTML = categoriesMarkup;
   }
 
-  getCategoriestList(data) {
+  getCategoriesList(data) {
+    // TODO: для чего здесь цикл?
+    // можно ли добавить item для SortableList не в теле цикла?
     data.forEach(dataItem => {
       const items = this.getCategoriesListItem(dataItem);
       const sortableList = new SortableList({ items });
@@ -140,13 +149,15 @@ export default class Page {
 
   getCategoriesListItem(data) {
     const { subcategories } = data;
+
     return subcategories.map(subcategory => {
       const wrapper = document.createElement('div');
+
       wrapper.innerHTML = `
-            <li class="categories__sortable-list-item sortable-list__item" data-grab-handle="" data-id="${subcategory.id}">
-                <strong>${subcategory.title}</strong>
-                <span><b>${subcategory.count}</b> products</span>
-            </li>`;
+        <li class="categories__sortable-list-item sortable-list__item" data-grab-handle="" data-id="${subcategory.id}">
+            <strong>${subcategory.title}</strong>
+            <span><b>${subcategory.count}</b> products</span>
+        </li>`;
 
       return wrapper.firstElementChild;
     });
@@ -154,6 +165,7 @@ export default class Page {
 
   getSubElements(element) {
     const elements = element.querySelectorAll('[data-element]');
+
     return [...elements].reduce((acc, item) => {
       acc[item.dataset.element] = item;
       return acc;
@@ -169,7 +181,10 @@ export default class Page {
   }
 
   destroy() {
-    this.subElements.categoriesContainer.removeEventListener('pointerdown', this.onPointerDown);
+    const { categoriesContainer } = this.subElements;
+
+    categoriesContainer.removeEventListener('pointerdown', this.onPointerDown);
+
     for (const component of Object.values(this.components)) {
       component.destroy();
     }
